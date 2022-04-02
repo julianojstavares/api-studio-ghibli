@@ -1,4 +1,4 @@
-# Sistema de entregas
+# API Studio Ghibli
 
 - NodeJS
 - PostgreSQL
