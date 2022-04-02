@@ -17,7 +17,7 @@ export async function ensureTableNotEmpty(request: Request, response: Response, 
 
     } catch (error)
     {
-        return response.status(400).json({ error: 'O banco de dados já está vazio' });
+        return response.status(400).json({ error: 'O banco de dados está vazio' });
     }
 
 }
