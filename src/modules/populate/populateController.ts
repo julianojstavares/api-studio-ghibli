@@ -9,7 +9,7 @@ export class PopulateController {
        const populateUseCase = new PopulateUseCase();
        const result = await populateUseCase.execute();
        
-       return response.json(result);
+       return response.status(200).json(result);
 
     }
 
