@@ -13,6 +13,9 @@ export class FilmsController
         let order;
         let orderedField;
         let fields;
+        let where;
+        let whereClauses;
+        let term;
 
         if (request.query)
         {
@@ -21,6 +24,9 @@ export class FilmsController
             order = request.query.order as Prisma.SortOrder;
             orderedField = request.query.orderedField as string;
             fields = request.query.fields as string;
+            where = request.query.where as string;
+            whereClauses = request.query.whereClauses as string;
+            term = request.query.term as string;
         }
 
         const filmsUseCase = new FilmsUseCase();
@@ -40,7 +46,7 @@ export class FilmsController
 
         // }
 
-        const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields });
+        const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields, where, whereClauses, term });
         response.json(result);
 
     }
