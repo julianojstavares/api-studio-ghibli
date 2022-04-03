@@ -13,7 +13,7 @@ interface IFilmsQuery
     orderedField?: string;
     fields?: string;
     where?: string;
-    whereClauses?: string;
+    clause?: string;
     term?: string;
 
 }
@@ -21,7 +21,7 @@ interface IFilmsQuery
 export class FilmsUseCase
 {
 
-    async execute({ limit, offset, order, orderedField, fields, where, whereClauses, term }: IFilmsQuery)
+    async execute({ limit, offset, order, orderedField, fields, where, clause, term }: IFilmsQuery)
     {
 
         let filmes = {} as Array<{}>;
@@ -38,7 +38,8 @@ export class FilmsUseCase
                 take: qLimit,
                 orderBy: ordered(orderedField, order),
                 select: selected(selectedFields),
-                where: whereOptions(where, whereClauses, term),
+                where: whereOptions(where, clause, term)
+
 
             });
         }
@@ -50,7 +51,7 @@ export class FilmsUseCase
                 skip: qOffset,
                 take: qLimit,
                 orderBy: ordered(orderedField, order),
-                where: whereOptions(where, whereClauses, term),
+                where: whereOptions(where, clause, term),
 
             });
 
@@ -64,7 +65,18 @@ export class FilmsUseCase
             filmes
         }
 
-        return pageInfo;
+        let query = {
+            limit,
+            offset,
+            order,
+            orderedField,
+            fields,
+            where,
+            clause,
+            term
+        }
+
+        return query;
 
     }
 

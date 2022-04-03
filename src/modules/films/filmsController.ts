@@ -14,7 +14,7 @@ export class FilmsController
         let orderedField;
         let fields;
         let where;
-        let whereClauses;
+        let clause;
         let term;
 
         if (request.query)
@@ -25,7 +25,7 @@ export class FilmsController
             orderedField = request.query.orderedField as string;
             fields = request.query.fields as string;
             where = request.query.where as string;
-            whereClauses = request.query.whereClauses as string;
+            clause = request.query.clause as string;
             term = request.query.term as string;
         }
 
@@ -46,7 +46,7 @@ export class FilmsController
 
         // }
 
-        const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields, where, whereClauses, term });
+        const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields, where, clause, term });
         response.json(result);
 
     }
