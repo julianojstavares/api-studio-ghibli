@@ -14,8 +14,10 @@ interface IFilmsQuery
 
 export class FilmsUseCase
 {
+
     async execute({ limit, offset, order, orderedField, fields }: IFilmsQuery)
     {
+
         const totalFilms = await prisma.filmes.count();
 
         let qLimit = limit ? parseInt(limit) : totalFilms;
@@ -32,6 +34,7 @@ export class FilmsUseCase
         let pontuacaoSelected = selectedFields.includes("pontuacao");
 
         let filmes = {} as Array<{}>;
+
 
         if (selectedFields.length > 0)
         {
@@ -51,11 +54,6 @@ export class FilmsUseCase
                     data_lancamento: data_lancamentoSelected,
                     pontuacao: pontuacaoSelected,
                 },
-                where: {
-                    titulo: {
-                        contains: ""
-                    }
-                }
 
             });
         }
@@ -83,5 +81,7 @@ export class FilmsUseCase
         }
 
         return pageInfo;
+
     }
+
 }

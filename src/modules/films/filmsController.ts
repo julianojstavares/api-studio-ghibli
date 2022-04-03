@@ -25,23 +25,23 @@ export class FilmsController
 
         const filmsUseCase = new FilmsUseCase();
 
-        try
-        {
+        // try
+        // {
 
-            const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields });
-            response.json(result);
+        //     const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields });
+        //     response.json(result);
 
-        } catch (error)
-        {
+        // } catch (error)
+        // {
 
-            response.status(400).json({
-                "erro": "Erro ao listar filmes. Verifique os parâmetros passados na query."
-            });
+        //     response.status(400).json({
+        //         "erro": "Erro ao listar filmes. Verifique os parâmetros passados na query."
+        //     });
 
-        }
+        // }
 
-        // const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields });
-        // response.json(result);
+        const result = await filmsUseCase.execute({ limit, offset, order, orderedField, fields });
+        response.json(result);
 
     }
 
