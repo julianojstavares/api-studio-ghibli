@@ -6,21 +6,27 @@ export function whereClausesOptions(whereClauses: string | undefined, term: stri
     {
 
         let clauses = whereClauses.split(",");
+        let terms = term?.split(",") ?? [""];
 
         let obj = Object.create({});
 
-        for(let index = 0; index < clauses.length; index++)
+        let elementTerm = "";
+
+        for(let iCLauses = 0; iCLauses < clauses.length; iCLauses++)
         {
-
-            const element = clauses[index];
-
-            obj = { ...obj, [element]: termOptions(term), };
-
+            const element = clauses[iCLauses];
+            // for(let iTerms = 0; iTerms < terms.length; iTerms++)
+            // {
+            //     elementTerm = terms[iTerms];
+            //     console.log(iTerms)
+            // }
+            obj = { ...obj, [element]: terms[2], };
+            
         }
         
-        console.log("Where Clauses");
         console.log(obj);
         return obj;
+        // console.log(terms)
 
     }
 }
