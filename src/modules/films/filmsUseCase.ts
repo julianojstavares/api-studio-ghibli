@@ -1,5 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../database/prismaClient";
+import { ordered } from "./utils/ordered";
+import { selected } from "./utils/selected";
+import { whereOptions } from "./utils/whereOptions";
 
 interface IFilmsQuery
 {
@@ -9,29 +12,24 @@ interface IFilmsQuery
     order?: Prisma.SortOrder;
     orderedField?: string;
     fields?: string;
+    where?: string;
+    clause?: string;
+    term?: string;
 
 }
 
 export class FilmsUseCase
 {
-    async execute({ limit, offset, order, orderedField, fields }: IFilmsQuery)
+
+    async execute({ limit, offset, order, orderedField, fields, where, clause, term }: IFilmsQuery)
     {
-        const totalFilms = await prisma.filmes.count();
-
-        let qLimit = limit ? parseInt(limit) : totalFilms;
-        let qOffset = offset ? parseInt(offset) : 0;
-
-        let selectedFields = fields ? fields.split(",") : [];
-
-        let idSelected = selectedFields.includes("id");
-        let tituloSelected = selectedFields.includes("titulo");
-        let tituloOriginalSelected = selectedFields.includes("titulo_original");
-        let imagemSelected = selectedFields.includes("imagem");
-        let descricaoSelected = selectedFields.includes("descricao");
-        let data_lancamentoSelected = selectedFields.includes("data_lancamento");
-        let pontuacaoSelected = selectedFields.includes("pontuacao");
 
         let filmes = {} as Array<{}>;
+        const totalFilms = await prisma.filmes.count();
+        let qLimit = limit ? parseInt(limit) : totalFilms;
+        let qOffset = offset ? parseInt(offset) : 0;
+        let selectedFields = fields ? fields.split(",") : [];
+        const whereObj = whereOptions(where, clause, term);
 
         if (selectedFields.length > 0)
         {
@@ -39,23 +37,9 @@ export class FilmsUseCase
 
                 skip: qOffset,
                 take: qLimit,
-                orderBy: {
-                    [orderedField ?? "data_lancamento"]: order || "asc"
-                },
-                select: {
-                    id: idSelected,
-                    titulo: tituloSelected,
-                    titulo_original: tituloOriginalSelected,
-                    imagem: imagemSelected,
-                    descricao: descricaoSelected,
-                    data_lancamento: data_lancamentoSelected,
-                    pontuacao: pontuacaoSelected,
-                },
-                where: {
-                    titulo: {
-                        contains: ""
-                    }
-                }
+                orderBy: ordered(orderedField, order),
+                select: selected(selectedFields),
+                where: whereObj
 
             });
         }
@@ -66,9 +50,8 @@ export class FilmsUseCase
 
                 skip: qOffset,
                 take: qLimit,
-                orderBy: {
-                    [orderedField ?? "data_lancamento"]: order || "asc"
-                }
+                orderBy: ordered(orderedField, order),
+                where: whereObj
 
             });
 
@@ -83,5 +66,7 @@ export class FilmsUseCase
         }
 
         return pageInfo;
+
     }
+
 }
