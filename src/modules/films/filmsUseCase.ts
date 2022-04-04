@@ -29,6 +29,7 @@ export class FilmsUseCase
         let qLimit = limit ? parseInt(limit) : totalFilms;
         let qOffset = offset ? parseInt(offset) : 0;
         let selectedFields = fields ? fields.split(",") : [];
+        const whereObj = whereOptions(where, clause, term);
 
         if (selectedFields.length > 0)
         {
@@ -38,8 +39,7 @@ export class FilmsUseCase
                 take: qLimit,
                 orderBy: ordered(orderedField, order),
                 select: selected(selectedFields),
-                where: whereOptions(where, clause, term)
-
+                where: whereObj
 
             });
         }
@@ -51,7 +51,7 @@ export class FilmsUseCase
                 skip: qOffset,
                 take: qLimit,
                 orderBy: ordered(orderedField, order),
-                where: whereOptions(where, clause, term),
+                where: whereObj
 
             });
 
@@ -65,18 +65,7 @@ export class FilmsUseCase
             filmes
         }
 
-        let query = {
-            limit,
-            offset,
-            order,
-            orderedField,
-            fields,
-            where,
-            clause,
-            term
-        }
-
-        return query;
+        return pageInfo;
 
     }
 

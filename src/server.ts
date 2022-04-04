@@ -24,4 +24,4 @@ app.use((err: Error, request: express.Request, response: express.Response, next:
 
 app.use(routes);
 
-app.listen(port, () => console.log(`Server started on http://localhost:${port}`));
+app.listen(port, () => console.log(`Server started on ${process.env.BASE_URL}:${port}`));
