@@ -1,6 +1,8 @@
 import express from 'express';
 import "express-async-errors";
 import { routes } from './routes';
+import swaggerUI from 'swagger-ui-express';
+import swaggerDocs from '../swagger.json';
 
 const app = express();
 
@@ -23,5 +25,7 @@ app.use((err: Error, request: express.Request, response: express.Response, next:
 });
 
 app.use(routes);
+
+app.use("/", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.listen(port, () => console.log(`Server started on ${process.env.BASE_URL}:${port}`));
