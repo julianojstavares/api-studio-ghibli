@@ -215,7 +215,38 @@
                             {
                                 "schema": 
                                 {
-                                    "$ref": "#/components/schemas/filmsError"
+                                    "type": "object",
+                                    "properties": 
+                                    {
+                                        "filmes_cadastrados": 
+                                        {
+                                            "type": "number",
+                                            "example": "22"
+                                        },
+                                        "filmes_listados": 
+                                        {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "limit":
+                                        {
+                                            "type": "number",
+                                            "example": "0"
+                                        },
+                                        "offset":
+                                        {
+                                            "type": "number",
+                                            "example": "0"
+                                        },
+                                        "filmes": 
+                                        {
+                                            "type": "array",
+                                            "items": 
+                                            {
+                                                "$ref": "#/components/schemas/filme"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -290,16 +321,47 @@
                     }
                 }
             },
-            "filmsSuccess": 
+            "filme":
             {
                 "type": "object",
-                "properties": 
+                "properties":
                 {
-                    "filmes_cadastrados": 
+                    "id": 
                     {
                         "type": "number",
-                        "example": "22"
+                        "example": 155
+                    },
+                    "titulo": 
+                    {
+                        "type": "string",
+                        "example": "Castle in the Sky"
+                    },
+                    "titulo_original": 
+                    {
+                        "type": "string",
+                        "example": "天空の城ラピュタ"
+                    },
+                    "imagem": 
+                    {
+                        "type": "string",
+                        "example": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/npOnzAbLh6VOIu3naU5QaEcTepo.jpg"
+                    },
+                    "descricao": 
+                    {
+                        "type": "string",
+                        "example": "The orphan Sheeta inherited a mysterious crystal that links her to the mythical sky-kingdom of Laputa. With the help of resourceful Pazu and a rollicking band of sky pirates, she makes her way to the ruins of the once-great civilization. Sheeta and Pazu must outwit the evil Muska, who plans to use Laputa's science to make himself ruler of the world."
+                    },
+                    "data_lancamento": 
+                    {
+                        "type": "string",
+                        "example": "1986"
+                    },
+                    "pontuacao": 
+                    {
+                        "type": "string",
+                        "example": "95"
                     }
+
                 }
             },
             "filmsError": 
