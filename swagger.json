@@ -1,0 +1,384 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Studio Ghibli",
+        "description": "API criada com o objetivo de estudo sobre Node + Express + Prisma + PostgreSQL\n\n**OBJETIVO**: Consultar filmes na API do Studio Ghibli, salvar algumas informações, e disponibilizar dois endpoints para consultar esses filmes.\n\n\\* = https://ghibliapi.herokuapp.com/#section/Studio-Ghibli\n\nDescrição do Projeto\n\n- Consultar 20 filmes no endpoint onde listam os mesmos.\n- Salvar as seguintes informações em alguma base de dados: titulo, titulo original, descrição, data de lançamento e a pontuação\n- Criar uma API para expor consultas a essa base de dados.\n- Um endpoint deve ser capaz de listar os filmes de forma paginada usando os\nparâmetros limit/offset, ordenando sempre pela data de lançamento.\n- Um endpoint para consultar os filmes apenas por título, nesse caso essa busca deve\nser `full text`, logo ao informar pelo menos 4 letras ela deve retornar os filmes com o\ntítulo mais próximo da consulta.",
+        "contact": {
+        "name": "Juliano J. S. Tavares",
+        "email": "julianojstavares@outlook.com"
+        },
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Servidor local"
+        } 
+    ],
+    "paths": 
+    {
+        "/populate": 
+        {
+            "get": 
+            {
+                "summary": "Obter todos os filmes",
+                "description": "Busca os filmes na internet e guarda em uma base de dados",
+                "tags": ["Database"],
+                "responses": 
+                {
+                    "200": 
+                    {
+                        "description": "Sucesso",
+                        "content": 
+                        {
+                            "application/json": 
+                            {
+                                "schema": 
+                                {
+                                    "$ref": "#/components/schemas/populateSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "400": 
+                    {
+                        "description": "Bad Request",
+                        "content": 
+                        {
+                            "application/json": 
+                            {
+                                "schema": 
+                                {
+                                    "$ref": "#/components/schemas/populateError"
+                                }
+                            }
+                        }
+
+                    }
+               }
+            }
+        },
+        "/clear": 
+        {
+            "get": 
+            {
+                "summary": "Apagar todos os filmes",
+                "description": "Remove todos os filmes da tabela filmes da base de dados",
+                "tags": ["Database"],
+                "responses": 
+                {
+                    "200": 
+                    {
+                        "description": "Sucesso",
+                        "content": 
+                        {
+                            "application/json": 
+                            {
+                                "schema": 
+                                {
+                                    "$ref": "#/components/schemas/clearSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "400": 
+                    {
+                        "description": "Bad Request",
+                        "content": 
+                        {
+                            "application/json": 
+                            {
+                                "schema": 
+                                {
+                                    "$ref": "#/components/schemas/clearError"
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        },
+        "/films": 
+        {
+            "get": 
+            {
+                "summary": "Exibir filmes",
+                "description": "Lista os filmes que estão dentro da base de dados. \n\n Aqui é possível realizar paginação, ordenação e filtragem dos resultados. Para testar, aperte o botão 'Try it out', insira os valores nos campos desejados e clique no botão 'Execute'. Veja alguns exemplos: \n\n ### - Realizar paginação usando limit e offset (os filmes são ordenados por padrão pela data de lançamento de maneira crescente) \n\n Insira o valor 5 no parâmetro limit e 0 no offset e verá uma página com apenas 5 resultados. Para ver a próxima página basta trocar o valor do offset de 0 para 5 e assim por diante. \n\n Isso é o mesmo que /films?limit=5&offset=0, /films?limit=5&offset=5 \n\n \n\n ### - Realizar paginação usando limit e offset e ordenar pela data de lançamento de maneira decrescente \n\n Insira 'data_lancamento' no campo orderedField e o valor 'desc' no campo order. Insira 5 no limit e 0 no offset \n\n Isso é o mesmo que /films?orderedField=data_lancamento&order=desc&limit=5&offset=0 \n\n \n\n ### - Consultar filmes apenas por título, por exemplo, um filme que contenha as quatro letras 'cast' no título, independente se está em letra maiúscula ou minúscula, e listar apenas os títulos dos filmes. \n\n Coloque 'titulo' no campo fields, 'titulo' no campo where, 'contains,mode' no campo clause e 'cast,insensitive' no campo term \n\n Isso é o mesmo que /films?fields=titulo&where=titulo&clause=contains,mode&term=cast,insensitive \n\n ### - Usar o método Full Text Search para listar os filmes que contenham as palavras 'castle' E 'sky' no título e exibir apenas o título dos filmes no resultado. \n\n fields = 'titulo', where = 'titulo', clause = 'search', term = 'castle %26 sky' (note que o %26 é equivalente ao caractere & ' 'E' comercial ', mas você pode tentar passar o caractere & no termo) \n\n Isso é o mesmo que /films?fields=titulo&where=titulo&clause=search&term=castle%20%26%20sky ou /films?fields=titulo&where=titulo&clause=search&term=castle & sky. Saiba mais em https://www.w3schools.com/tags/ref_urlencode.asp \n\n \n\n ### - Usar o método Full Text Search para listar os filmes que contenham as palavras 'castle' OU 'porco' no título e exibir apenas o título dos filmes no resultado. \n\n fields = 'titulo', where = 'titulo', clause = 'search', term = 'castle | porco' \n\n Isso é o mesmo que /films?fields=titulo&where=titulo&clause=search&term=castle | porco \n\n \n\n ### - Exibir apenas o título e a pontuação dos filmes em ordem alfabética \n\n fields = 'titulo,pontuacao' orderedField = 'titulo' \n\n Isso é o mesmo que /films?fields=titulo,pontuacao&orderedField=titulo  \n\n ### - Para saber mais \n\n Para mais opções de filtros, veja https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#where \n\n Para mais opções da funcionalidade full text search, veja https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#full-text-search \n\n Tudo aqui foi feito baseado na documentação do ORM Prisma. \n\n",
+                "tags": ["List"],
+                "parameters": 
+                [
+                    {
+                        "name": "clause",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "orderedField",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "where",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "term",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fields",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                        "type": "string"
+                        }
+                    }
+                ],
+                "responses": 
+                {
+
+                    "200": 
+                    {
+                        "description": "Sucesso",
+                        "content": 
+                        {
+                            "application/json": 
+                            {
+                                "schema": 
+                                {
+                                    "$ref": "#/components/schemas/filmsSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "400": 
+                    {
+                        "description": "Bad Request",
+                        "content": 
+                        {
+                            "application/json": 
+                            {
+                                "schema": 
+                                {
+                                    "type": "object",
+                                    "properties": 
+                                    {
+                                        "filmes_cadastrados": 
+                                        {
+                                            "type": "number",
+                                            "example": "22"
+                                        },
+                                        "filmes_listados": 
+                                        {
+                                            "type": "number",
+                                            "example": "1"
+                                        },
+                                        "limit":
+                                        {
+                                            "type": "number",
+                                            "example": "0"
+                                        },
+                                        "offset":
+                                        {
+                                            "type": "number",
+                                            "example": "0"
+                                        },
+                                        "filmes": 
+                                        {
+                                            "type": "array",
+                                            "items": 
+                                            {
+                                                "$ref": "#/components/schemas/filme"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                
+                }
+            }
+        }
+    },
+    "components": 
+    {
+
+        "schemas":
+        {
+
+            "populateSuccess": 
+            {
+                "type": "object",
+                "properties": 
+                {
+                    "status": 
+                    {
+                        "type": "string",
+                        "example": "Successfully Populated"
+                    },
+                    "message": 
+                    {
+                        "type": "string",
+                        "example": "22 filmes inseridos no banco de dados"
+                    }
+                }
+            },
+            "populateError": 
+            {
+                "type": "object",
+                "properties": 
+                {
+                    "error": 
+                    {
+                        "type": "string",
+                        "example": "Os filmes já estão no banco de dados"
+                    }
+                }
+            },
+            "clearSuccess": 
+            {
+                "type": "object",
+                "properties": 
+                {
+                    "status": 
+                    {
+                        "type": "string",
+                        "example": "Successfully Cleaned"
+                    },
+                    "message": 
+                    {
+                        "type": "string",
+                        "example": "Não há filmes no banco de dados"
+                    }
+                }
+            },
+            "clearError": 
+            {
+                "type": "object",
+                "properties": 
+                {
+                    "error": 
+                    {
+                        "type": "string",
+                        "example": "O banco de dados está vazio"
+                    }
+                }
+            },
+            "filme":
+            {
+                "type": "object",
+                "properties":
+                {
+                    "id": 
+                    {
+                        "type": "number",
+                        "example": 155
+                    },
+                    "titulo": 
+                    {
+                        "type": "string",
+                        "example": "Castle in the Sky"
+                    },
+                    "titulo_original": 
+                    {
+                        "type": "string",
+                        "example": "天空の城ラピュタ"
+                    },
+                    "imagem": 
+                    {
+                        "type": "string",
+                        "example": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/npOnzAbLh6VOIu3naU5QaEcTepo.jpg"
+                    },
+                    "descricao": 
+                    {
+                        "type": "string",
+                        "example": "The orphan Sheeta inherited a mysterious crystal that links her to the mythical sky-kingdom of Laputa. With the help of resourceful Pazu and a rollicking band of sky pirates, she makes her way to the ruins of the once-great civilization. Sheeta and Pazu must outwit the evil Muska, who plans to use Laputa's science to make himself ruler of the world."
+                    },
+                    "data_lancamento": 
+                    {
+                        "type": "string",
+                        "example": "1986"
+                    },
+                    "pontuacao": 
+                    {
+                        "type": "string",
+                        "example": "95"
+                    }
+
+                }
+            },
+            "filmsError": 
+            {
+                "type": "object",
+                "properties": 
+                {
+                    "erro": 
+                    {
+                        "type": "string",
+                        "example": "Erro ao listar filmes. Verifique os parâmetros passados na query."
+                    }
+                }
+            }
+
+        }
+
+    }
+
+  }
