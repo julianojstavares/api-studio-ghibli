@@ -12,3 +12,6 @@ Para executar, após clonar, faça:
 - yarn prisma generate
 - yarn dev
 - abra o browser e digite "localhost:3000"
+
+
+<img src="swagger_doc.png">
